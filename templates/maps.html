@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turf Circle Example</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw.css"  />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+    <script src="/js/leaflet-0.7.2/leaflet.ajax.min.js"></script>
+
+<style>
+      html, body,  #map {
+        width : 100%;
+        height : 100%;
+      }
+</style>
+</head>
+<body>
+    <div id="map" ></div>
+<script>
+
+var map = L.map('map').setView([35.160337, -3.230718], 10);  
+
+
+var osm=new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',{ 
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'});
+    osm.addTo(map);
+
+    var editableLayers = new L.FeatureGroup();
+    map.addLayer(editableLayers);   
+    
+   
+    var options = {
+        position: 'topright',
+        drawError: {
+        color: '#b00b00',
+        timeout: 2000
+        },
+        draw: {
+          polygon: {
+            allowIntersection: false,
+            allowSelfIntersection: true, // Restricts shapes to simple polygons
+            drawError: {
+              color: '#e1e100', // Color the shape will turn when intersects
+              message: '<strong>Oh snap!<strong> you can\'t draw that!' // Message that will show when intersect
+            },
+            shapeOptions: {
+              color: '#97009c'
+            }
+          },
+          // disable toolbar item by setting it to false
+          polyline: false,
+          circle: false, // Turns off this drawing tool
+          rectangle: false,
+          marker: false,
+          circlemarker:false,
+          },
+        edit: {
+          featureGroup: editableLayers, //REQUIRED!!
+          remove: true,
+        }
+      };
+
+    var drawControl = new L.Control.Draw(options);
+    map.addControl(drawControl);
+    
+    var coords = [];
+    map.on(L.Draw.Event.CREATED, function (e) {
+        var layer = e.layer;
+        var type = e.layerType;
+    if (type === 'polygon') { 
+      
+      var points = layer._latlngs;
+
+      // here you can get it in geojson format
+      var geojson = layer.toGeoJSON();
+      console.log(geojson)
+
+  }
+   
+    editableLayers.addLayer(layer);  
+
+
+      
+});
+
+
+ </script>
+</body>
+</html>

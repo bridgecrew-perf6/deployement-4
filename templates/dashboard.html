@@ -1,0 +1,294 @@
+{% extends 'Base.html' %}
+{%block content%}
+
+
+
+
+
+<div class="main-panel">
+  <div class="content-wrapper">
+  <h4 class="card-title">Secteurs</h4>
+  <p class="card-description">Déffiniser les Secteurs de vos delégues</p>
+  <div class="row">
+    <div class="col-md-4 h-100">
+      <div class="bg-light p-4 rounded">
+        <h6 class="card-title text-dark">Liste des Secteurs</h6>
+        <div id="profile-list-left" class="py-2">
+          <div class="card rounded box-shadow mb-2">
+            <div class="card-body p4">
+              <div class="media">
+                <div class="media-body">
+
+
+                  
+                  <div class="row">
+                  <div class="col-md-7">
+                    <h6 class="mb-1">Es Senia</h6>
+                    <p class="mb-0 text-muted">
+                      Nombre de client : 770                               
+                    </p>
+
+                  </div>
+                  
+
+
+                  <div class="col-md-2">
+                    <button type="button"  class="btn btn-sm icon-trash btn-danger btn-rounded "></button>
+        
+                </div>
+                <div class="col-md-2">
+                  <button type="button" onclick="goto()" class="btn btn-sm icon-map btn-primary btn-rounded "></button>
+      
+              </div>
+
+                </div>
+                </div>                              
+              </div>
+            </div>
+          </div>
+
+
+          <div class="card rounded box-shadow mb-2">
+            <div class="card-body p4">
+              <div class="media">
+                <div class="media-body">
+
+
+                  
+                  <div class="row">
+                  <div class="col-md-7">
+                    <h6 class="mb-1">belgaid</h6>
+                    <p class="mb-0 text-muted">
+                      Nombre de client : 770                               
+                    </p>
+
+                  </div>
+                  
+
+
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-sm icon-trash btn-danger btn-rounded "></button>
+        
+                </div>
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-sm icon-map btn-primary btn-rounded "></button>
+      
+              </div>
+
+                </div>
+                </div>                              
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="card rounded box-shadow mb-2">
+            <div class="card-body p4">
+              <div class="media">
+                <div class="media-body">
+
+
+                  
+                  <div class="row">
+                  <div class="col-md-7">
+                    <h6 class="mb-1">belgaid</h6>
+                    <p class="mb-0 text-muted ">
+                      Nombre de client : 770                               
+                    </p>
+
+                  </div>
+                  
+
+
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-sm icon-trash btn-danger btn-rounded "></button>
+        
+                </div>
+                <div class="col-md-2">
+                  <button type="button" class="btn btn-sm icon-map btn-primary btn-rounded "></button>
+      
+              </div>
+
+                </div>
+                </div>                              
+              </div>
+            </div>
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="add_route" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <form method="POST" id="add_route" enctype="multipart/form-data">
+        {%csrf_token %}
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Ajouter un Nouveau Secteur</h5>
+            <button type="button" onclick="modal_hide()" class="close" data-dismiss="modal" aria-label="Close" 
+
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+           
+              <div class="form-group">
+                <label for="recipient-name" class="col-form-label">Nom du Secteur:</label>
+                <input type="text" class="form-control" id="sec_name" name="sec_name" Required>
+              </div>
+              
+              <div class="form-group">
+                <label for="recipient-name" class="col-form-label">Wilaya:</label>
+                <input type="text"  class="form-control" name="wilaya" id="wilaya" Required>
+                <input type="hidden" type="text" value=""  id="js_data_input"  name="js_data_input">
+              </div>       
+          </div>
+          <div class="modal-footer">
+            <button type="button" onclick="modal_hide()" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button  id="enrg" name="enrg" class="btn btn-success">Enregistrer</button>
+          </div>
+        
+        </div>
+      </div>
+    </form>
+    </div>
+    
+    <div class="col-md-8 h-100">
+      <div class="bg-light p-4 rounded">
+        <h4 class="card-title">Maps</h4>
+        <div class="card-body">
+          <div id="map" style="width:800px; height: 400px;"></div>
+          <script>
+
+            var map = L.map('map', {
+            }).setView([35.160337, 3.230718],7);
+            
+            
+           
+            
+            
+            var osm=new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',{ 
+                        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'});
+                osm.addTo(map);
+            
+                var editableLayers = new L.FeatureGroup();
+                map.addLayer(editableLayers);   
+                
+                var options = {
+                    position: 'topleft',
+                    drawError: {
+                    color: '#b00b00',
+                    timeout: 2000
+                    },
+                    draw: {
+                      polygon: {
+                        allowIntersection: false,
+                        allowSelfIntersection: true, // Restricts shapes to simple polygons
+                        drawError: {
+                          color: '#e1e100', // Color the shape will turn when intersects
+                          message: '<strong>Oh snap!<strong> you can\'t draw that!' // Message that will show when intersect
+                        },
+                        shapeOptions: {
+                          color: '#97009c'
+                        }
+                      },
+                      // disable toolbar item by setting it to false
+                      polyline: false,
+                      circle: false, // Turns off this drawing tool
+                      rectangle: false,
+                      marker: false,
+                      circlemarker:false,
+                      },
+                    edit: {
+                      featureGroup: editableLayers, //REQUIRED!!
+                      remove: true,
+                    }
+                  };
+            
+                var drawControl = new L.Control.Draw(options);
+                map.addControl(drawControl);
+                
+                
+
+
+                
+                var coords = [];
+                map.on(L.Draw.Event.CREATED, function (e) {
+                    var layer = e.layer;
+                    var type = e.layerType;
+                if (type === 'polygon') { 
+                  
+                  var points = layer._latlngs;
+
+                  // here you can get it in geojson format
+                  var geojson = layer.toGeoJSON();
+                  var myJSON = JSON.stringify(geojson);
+              //    alert(myJSON)
+           
+                  document.getElementById("js_data_input").setAttribute('value',myJSON);
+               
+                  $('#add_route').modal('show')
+             
+                } 
+               
+                editableLayers.addLayer(layer);  
+                layer.on("edit", function(event) {
+                  alert("layer edited !");
+                
+                    
+                });
+            
+                  
+            });
+
+
+
+            
+          
+            
+            map.on('draw:edited', function (e) {
+              var layers = e.layers;
+              layers.eachLayer(function (layer) {
+                  if (layer instanceof L.Polygon){
+                    alert('im an instance of L polygon');
+                  }
+              });
+          });
+
+
+          map.on('draw:deleted ', function (e) {
+            var layers = e.layers;
+            layers.eachLayer(function (layer) {
+                if (layer instanceof L.Polygon){
+                  alert('supp L polygon');
+                }
+            });
+        });
+           
+
+
+    
+
+
+            function goto() {
+              map.flyTo(new L.LatLng(27.824503,3.230718),7);
+            }
+            function modal_hide() {
+              $('#add_route').modal('hide');
+            }
+            
+             </script>
+             
+
+        </div>
+        
+      </div>     
+    </div>
+  </div>
+</div>
+</div>
+
+
+{% endblock %}
